@@ -1,22 +1,24 @@
-# 2024-04-23
+# 2024-04-23 (3h 47m) TLE Solved
+import sys
+from collections import Counter
+input = sys.stdin.readline
+
 def calculate(height):
     inventory = B
     flag = False
     time_cnt = 0
-    for i in range(len(ground)):
-        if ground[i] > height: # Remove block (2s)
-            diff = ground[i] - height
-            time_cnt += 2*diff
-            inventory += 1*diff
-        elif ground[i] < height: # Insert block (1s)
-            diff = height - ground[i]
-            time_cnt += 1*diff
-            inventory -= 1*diff
+    for h, c in counter:
+        if h > height: # Remove block (2s)
+            diff = h - height
+            time_cnt += 2*diff * c
+            inventory += 1*diff * c
+        else:   # h < height: # Insert block (1s)
+            diff = height - h
+            time_cnt += 1*diff * c
+            inventory -= 1*diff * c
             if inventory < 0:  # 인벤토리에 블록 부족 -> 높이 재설정 필요
                 flag = True 
                 break
-        else:
-            continue
     return time_cnt, flag
 
 N, M, B = map(int, input().split())
@@ -24,33 +26,15 @@ ground = []
 for i in range(N):
     ground.extend(list(map(int, input().split())))
 
-g_set = set(ground)
+counter = Counter(ground) # O(N)
+counter = sorted(counter.items(),reverse=True) # 내림차순 O(NlogN)
 best_time, result_height = 1e8, 0
-for height in range(min(g_set), max(g_set)+1):
+for height in range(min(ground), max(ground)+1):
     time_cnt, flag = calculate(height)
     if not flag and time_cnt <= best_time:
         best_time = time_cnt
         result_height = height
 print(best_time, result_height)
-
-
-# from collections import Counter
-# candidate = []
-# # 주어진 height 내에서 빈도수 순서대로 검토
-# counter = Counter(ground)
-# counter = sorted(counter.items(), key=lambda x:(-x[1],-x[0])) # -: 내림차순
-
-# reset = False
-# for k in range(len(counter)):
-#     height = counter[k][0]
-#     time_cnt, flag = calculate(height)
-#     if not flag: # if flag : # 1 more round
-#         break
-
-# candidate.append([time_cnt, height])
-# 평균값 candidate 도 계산 후 best 값 추출
-# result_time, result_height = sorted(candidate)[0]
-# print(result_time, result_height)
 
 '''
 # 4:38~5:22 (44m) 틀림
@@ -69,8 +53,9 @@ print(best_time, result_height)
 뭐가 문제일까?
 평균값이 아니라 가능한 모든 height값 (0~256) 돌려보기
 => 시간초과
-    for문 안에서 함수를 호출하는데 그 함수 내에 for문이 구현되어 있어, 2중 포문 구조이므로 시간초과 
-=> 값의 범위를 좁혀야 하지 않을까/ 최빈값, 평균값 외에 어떤 값이 될 수 있지? 
+  값의 범위를 좁혀야 하지 않을까/ 최빈값, 평균값 외에 어떤 값이 될 수 있지? 
+>> ground에 존재하는 값들, 그리고 그 평균값만을 가능한 height로 지정해준다는 것에 있어 근거가 없음
+>> ground에 존재하는 min값부터 max값까지 모든 값을 다 시도해 봐야함
 
 # 6:08~6:33 (25m)
 candidate 으로 결과값 다 받는 구조를 변수에 best 값 업데이트 하는 방식으로 바꿈
@@ -88,127 +73,33 @@ candidate 으로 결과값 다 받는 구조를 변수에 best 값 업데이트 
 => 시간초과
 
 ::: 시간초과 뜨는 이유 분석해보기 :::
+12:10~1:50 (1h 40m)
+B에는 최대 500*500*256 = 64,000,000 = 6.4*10^7 개의 블록 존재 가능
+=> 대략 10^8(1억)번은 1초정도 걸리므로 브루트포스로 풀어도 시간 제한 안에 해결 가능
+=> 2중 포문 불가 >> counter가 모두 다른 값을 가지고 있는 최악의 경우 6.4*10^7 * 256 = 약 1.6*10^10 이므로 시간 초과 되야하는거 아닌가?
+=> 질문 게시판 글 올림 : https://www.acmicpc.net/board/view/141727
+(PyPy3으로 제출하면 시간초과 안뜬다는 사례도 많아서 해봤는데 틀렸습니다 뜸)
+참고한 풀이 : https://dawitblog.tistory.com/72
+ground 값 하나씩 다 돌지 않고, set으로 묶은 다음 개수만큼 개산해 줄 수 있을 듯
+for i in range(len(ground)) -> for h, c in counter.items()
+=> 틀렸습니다
+
+반례 모음집에서 찾아봤다
+2 2 35
+20 10
+190 40
+[정답] 350 40
+[출력] 366 32
+>> calculate의 조건문 순서!!
+>> height가 높은게 먼저오도록 내림차순 정렬하여 inventory 주머니를 먼저 늘리는 것도 필요
+>> 다른 블록을 활용하여 쌓을 수 있는데 먼저 Insert 하다가 flag=True 되버리면 안됨!!! <<
+=> 시간 초과 (PyPy3로 해도 시간초과)
+else와 elif의 시간 차이가 많이 난다고 하여 (https://ggodong.tistory.com/297)
+else로 수정했지만 시간초과 그대로 발생
+=> 근데 위 참고 사이트에 나온 코드가 내 코드랑 완전 똑같이 구현되어 있는데, 나만 시간초과 뜨는 이유가 뭘까..
+
+3:20~50 (30m)
+counter 계산 및 sorted를 caculate 함수 안에서 해줄 필요가 없음
+=> 이 부분 수정해주니까 pypy3 성공
+Python으로 하니까 더 빠르고 적은 메모리 사용해서 성공
 '''
-
-
-
-
-
-
-
-
-
-
-# 2023-01-11
-# import sys
-# from collections import Counter
-# N, M, B = map(int, input().split())
-# ground = []
-# for i in range(N):
-#     ground.extend(list(map(int, sys.stdin.readline().split())))
-
-# def cal_time(ground, value, B):
-#     time = 0
-#     if value>256 or value<0:
-#         return 9999, 0
-
-#     for i in ground:
-#         if i > value: # remove block: 2sec
-#             time += 2 *(i-value)
-#             B += i-value
-#         elif i < value: # put block: 1sec
-#             time += 1*(value-i)
-#             B -= value-i
-#     # 가지고 있는 블록보다 많이 쓴 경우는 B>0이 될 때까지 높은 층부터 한 층 씩 block제거
-#     # pre_time = time
-#     # while B < 0:
-#     #     value -= 1
-#     #     remove_block_cnt = ground.count(max(ground))
-#     #     B += remove_block_cnt
-#     #     time += 2*remove_block_cnt
-#     #     ground = [x-1 for x in ground if x==max(ground)] # ground update
-#     #     if value<0:
-#     #         return 9999, 0
-#     #     return time - pre_time, value
-#     return time, value
-
-
-# # mean = cal_time(ground, int(round(sum(ground)/len(ground))), B)
-# # mode = cal_time(ground, Counter(ground).most_common()[0][0], B)
-# # print(int(round(sum(ground)/len(ground))), Counter(ground).most_common()[0][0])
-# # print(mean, mode)
-
-# res_min = cal_time(ground, min(ground), B)
-# for x in range(min(ground)+1, max(ground)+1):
-#     res = cal_time(ground, x, B)
-#     if res[0]<res_min[0] or (res[0]==res_min[0] and res[1]>res_min[1]):
-#         res_min = res
-# print(*res)
-
-
-# '''
-# # 경우의 수:
-# # 1. 평균값으로 맞추는 경우
-# # 2. 최빈값으로 맞추는 경우
-# # 3. 인벤토리가 비어있어 put을 못하는 경우
-
-
-# 반례1)
-# 1 3 68
-# 0 0 1
-# 정답: 2 1
-# 내답: 2 0
-# -> 내가 나눈 두 경우의 수 모두 해당 안됨 
-# -> 저 두가지만 하는게 아니라 min 부터 max까지 다 돌려야 할듯
-# 그리고 조건 반영 안됨: 답이 여러개 일 시 땅 높이가 높은 것 출력
-
-# 반례2)
-# 3 4 11
-# 29 51 54 44
-# 22 44 32 62
-# 25 38 16 2
-# 정답: 250 35
-# 내답: 2 43
-
-# 반례3)
-# 4 4 36
-# 15 43 61 21
-# 19 33 31 55
-# 48 63 1 30
-# 31 28 3 8
-# 정답: 355 32
-# 내답: 357 31
-
-# 반례4)
-# 2 2 0
-# 256 256
-# 0 0
-# 정답: 768 128
-# 내답: 4 255
-
-# 반례4)
-# 7 7 6000
-# 30 21 48 55 1 1 4
-# 0 0 0 0 0 0 0
-# 15 4 4 4 4 4 8
-# 20 40 60 10 20 30 2
-# 1 1 1 1 1 1 9
-# 24 12 33 7 14 25 3
-# 3 3 3 3 3 3 32
-# 정답: 879 10
-# 내답: 881 12
-
-# 반례5)
-# 2 2 35
-# 20 10
-# 190 40
-# 정답: 350 40
-# 내답: 375 65
-
-# 반례6)
-# 2 2 68
-# 120 90
-# 250 170
-# 정답: 290 170
-# 내답: 314 158
-# '''
