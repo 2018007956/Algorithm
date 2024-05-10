@@ -1,0 +1,17 @@
+-- 대장균들의 자식의 수 구하기
+SELECT ID, IFNULL(
+        (SELECT COUNT(*)
+            FROM ECOLI_DATA
+            GROUP BY PARENT_ID
+            HAVING PARENT_ID = ID), 0) AS CHILD_COUNT
+    FROM ECOLI_DATA
+    ORDER BY ID;
+
+-- 대장균의 크기에 따라 분류하기1
+SELECT ID, 
+        CASE WHEN SIZE_OF_COLONY <= 100 THEN 'LOW'
+             WHEN 100 < SIZE_OF_COLONY AND SIZE_OF_COLONY <= 1000  THEN 'MEDIUM'
+             WHEN 1000 < SIZE_OF_COLONY THEN 'HIGH'
+        END AS SIZE
+    FROM ECOLI_DATA    
+    ORDER BY ID;
