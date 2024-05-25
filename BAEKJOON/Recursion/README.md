@@ -1,1 +1,1 @@
-### https://www.acmicpc.net/workbook/view/9381
+- https://www.acmicpc.net/workbook/view/9381
