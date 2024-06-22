@@ -2,23 +2,23 @@
 N, M = map(int, input().split())
 arr = sorted(list(map(int, input().split())))
 s = []
-def dfs():
+def dfs(depth):
     if len(s)==M:
         print(' '.join(map(str, s)))
         return
 
-    for i in range(N):
+    for i in range(depth,N):
         s.append(arr[i])
-        dfs() 
+        dfs(i) 
         s.pop()
             
-dfs()
+dfs(0)
 
 
-# Solved (3m)
-from itertools import product
+# Solved (5m)
+from itertools import combinations_with_replacement
 N, M = map(int, input().split())
 arr = list(map(int, input().split()))
 arr.sort()
-for x in product(arr, repeat=M):
+for x in combinations_with_replacement(arr, M):
     print(*x)

@@ -1,19 +1,20 @@
-# another sol
+# Solved (5m)
 N, M = map(int, input().split())
 s = []
-def dfs():
+def dfs(x):
     if len(s)==M:
         print(' '.join(map(str, s)))
 
-    for i in range(1, N+1):
+    for i in range(x, N+1):
         if i not in s:
             s.append(i)
-            dfs()
+            dfs(i+1)
             s.pop()
-dfs()
+
+dfs(1)
 
 
-# Solved (7m)
+# Solved (8m) w/ Search
 N, M = map(int, input().split())
 visited = [False] * (N+1)
 res = ''
@@ -22,7 +23,7 @@ def dfs(res):
     if len(res)==M:
         print(*list(res))
 
-    for i in range(1, N+1):
+    for i in range(int(x), N+1):
         if 0<=i<N+1 and not visited[i]:
             visited[i] = True
             dfs(res+str(i))
@@ -34,8 +35,8 @@ for x in range(1, N+1):
     visited[x] = False
 
 
-# Solved (3m)
-from itertools import permutations
+# Solved (5m)
+from itertools import combinations
 N, M = map(int, input().split())
-for x in sorted(permutations(range(1,N+1),M)):
+for x in list(combinations(range(1,N+1), M)):
     print(*x)

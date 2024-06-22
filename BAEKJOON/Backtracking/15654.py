@@ -1,6 +1,8 @@
-# Solved (1m)
+# Solved (3m)
 N, M = map(int, input().split())
-arr = sorted(list(map(int, input().split())))
+arr = list(map(int, input().split()))
+arr.sort()
+
 s = []
 def dfs():
     if len(s)==M:
@@ -8,17 +10,18 @@ def dfs():
         return
 
     for i in range(N):
-        s.append(arr[i])
-        dfs() 
-        s.pop()
-            
+        if arr[i] not in s:
+            s.append(arr[i])
+            dfs()
+            s.pop()
+
 dfs()
 
 
-# Solved (3m)
-from itertools import product
+# Solved (5m)
+from itertools import permutations
 N, M = map(int, input().split())
 arr = list(map(int, input().split()))
 arr.sort()
-for x in product(arr, repeat=M):
+for x in permutations(arr, M):
     print(*x)
