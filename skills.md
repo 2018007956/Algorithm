@@ -1,6 +1,7 @@
 # Skills
 1. [파이썬 리스트 회전하기](#파이썬-리스트-회전하기)
 2. [가중치 트리에서 가장 긴 경로 구하기](#가중치-트리에서-가장-긴-경로-구하기)
+3. [2중 리스트 flatten](#2중-리스트-flatten)
 
 ## 파이썬 리스트 회전하기
 ```
@@ -37,3 +38,23 @@ print(li)
 
 두 번째 구한 거리가 트리에서 가장 긴 경로가 된다.  
 문제 : [백준 1967번 트리의 지름](https://github.com/2018007956/Algorithm/blob/master/BAEKJOON/CLASS4/1967.py)
+
+## 2중 리스트 flatten
+```
+from itertools import chain
+list_of_lists = [[x, 0] for x in range(10000)]
+
+%timeit list(chain(*list_of_lists))
+# 1000 loops, best of 3: 491 µs per loop
+
+%timeit list(chain.from_iterable(list_of_lists))
+# 1000 loops, best of 3: 429 µs per loop
+    
+%timeit [y for x in list_of_lists for y in x]
+# 1000 loops, best of 3: 725 µs per loop
+    
+%timeit sum(list_of_lists, [])
+# 1 loop, best of 3: 211 ms per loop
+
+참고 : https://www.winterjung.dev/list-of-lists-to-flatten/
+```
