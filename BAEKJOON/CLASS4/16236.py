@@ -61,25 +61,23 @@ status = [list(map(int, input().split())) for _ in range(N)]
 
 def bfs(start):
     queue = deque([start])
-    visited[start[0]][start[1]] = True
     status[start[0]][start[1]] = 0 # 이동 가능하도록
     eat = 0
     baby_shark_size = 2
     time = 0
     while queue:
         x, y = queue.popleft()
-        eat_candidate = [[abs(nx-x)+abs(ny-y), (nx,ny)] for nx in range(N) for ny in range(N) if status[nx][ny]<=baby_shark_size and not visited[nx][ny]]
+        eat_candidate = [[abs(nx-x)+abs(ny-y), (nx,ny)] for nx in range(N) for ny in range(N) if 0<status[nx][ny]<baby_shark_size]
         if eat_candidate:
             eat_candidate.sort(key=lambda x : (x[0], x[1][0], x[1][1])) # 우선순위: 위 > 왼쪽 > 나머지
-            for dist, (nx, ny) in eat_candidate:
-                visited[nx][ny] = True
-                queue.append((nx,ny))
-                if 0 < status[nx][ny] < baby_shark_size:
-                    eat += 1
-                    time += dist
-                    if eat == baby_shark_size:
-                        baby_shark_size += 1
-                        eat = 0
+            dist, (nx, ny) = eat_candidate[0]
+            queue.append((nx,ny))
+            status[nx][ny] = 0
+            eat += 1
+            time += dist
+            if eat == baby_shark_size:
+                baby_shark_size += 1
+                eat = 0
         
     if eat==0 and baby_shark_size==2:
         print(0)
@@ -87,7 +85,7 @@ def bfs(start):
         print(time)
 
 baby_shark_position = [(x,y) for x in range(N) for y in range(N) if status[x][y]==9][0]
-visited = [[False] * N for _ in range(N)]
+eated = [[False] * N for _ in range(N)]
 bfs(baby_shark_position)
 
 
@@ -97,4 +95,6 @@ bfs(baby_shark_position)
 
     
  * 물고기 위치를 미리 구해 놓고 탐색하는 내 첫 번째 코드 틀린 로직 찾기
+    => 틀린 이유 : "중간에 자기보다 큰 물고기가 있으면 돌아서 가기 때문에 최단 경로라고 해서 abs 절대값으로 구하는게 아님"
+        결국 정답 코드처럼 한 칸씩 이동하며 거리 계산해줘야 함
 '''
