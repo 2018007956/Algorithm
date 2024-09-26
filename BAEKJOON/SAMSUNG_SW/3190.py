@@ -13,13 +13,12 @@ for r, c in apple:
     board[r-1][c-1] = 2
 
 # Game Start
-queue = deque([[0, 0]])
 snake_body = deque([[0, 0]])
 time = 0
 change_d = [(0,1), (1,0), (0,-1), (-1,0)] # -> Right / <- Left
 cur_d_idx = 0
-while queue:
-    r, c = queue.popleft()
+while True:
+    r, c = snake_body[-1]
     nr, nc = r+change_d[cur_d_idx][0], c+change_d[cur_d_idx][1]
     time += 1
     # finish condition 1) face the wall
@@ -47,7 +46,6 @@ while queue:
     else:
         snake_body.popleft()
 
-    queue.append([nr, nc])
     snake_body.append([nr, nc])
 
 '''
