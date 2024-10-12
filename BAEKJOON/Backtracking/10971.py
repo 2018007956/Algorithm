@@ -1,28 +1,24 @@
-# 풀이 공부
-def dfs(depth, x):
-    global sum_cost, min_cost
-    if depth == N-1:
-        if W[x][0]:
-            sum_cost += W[x][0]
-            min_cost = min(min_cost, sum_cost)
-            sum_cost -= W[x][0]
-        return
+def dfs(depth, x, cost):
+    global min_cost
+    if depth==N-1:
+        min_cost = min(min_cost, cost+weight[x][0])
+        return 
 
     for i in range(1, N):
-        if not visited[i] and W[x][i]:
+        if not visited[i] and weight[x][i]:
             visited[i] = True
-            sum_cost += W[x][i]
-            dfs(depth+1, i)
+            dfs(depth+1, i, cost+weight[x][i])
             visited[i] = False
-            sum_cost -= W[x][i]
 
 
 N = int(input())
-W = [list(map(int, input().split())) for _ in range(N)]
-
+weight = [list(map(int, input().split())) for _ in range(N)]
 visited = [False] * N
-sum_cost = 0
-min_cost = float('inf')
-
-dfs(0, 0)
+min_cost = 1e8
+dfs(0, 0, 0)
 print(min_cost)
+
+'''
+for i in range(1, N) 에서 0을 꼭 빼줘야 함
+그래야 바로 출발지로 돌아오지 않고 끝까지 돌다가 마지막에 0 방문 가능
+'''
