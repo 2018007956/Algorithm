@@ -7,11 +7,25 @@ SELECT ID, IFNULL(
     FROM ECOLI_DATA
     ORDER BY ID;
 
--- 대장균의 크기에 따라 분류하기1
+-- 대장균의 크기에 따라 분류하기 1
 SELECT ID, 
         CASE WHEN SIZE_OF_COLONY <= 100 THEN 'LOW'
              WHEN 100 < SIZE_OF_COLONY AND SIZE_OF_COLONY <= 1000  THEN 'MEDIUM'
              WHEN 1000 < SIZE_OF_COLONY THEN 'HIGH'
         END AS SIZE
     FROM ECOLI_DATA    
+    ORDER BY ID;
+
+-- 대장균의 크기에 따라 분류하기 2
+SELECT ID,
+    CASE
+        WHEN PER <= 0.25 THEN 'CRITICAL'
+        WHEN PER <= 0.5 THEN 'HIGH'
+        WHEN PER <= 0.75 THEN 'MEDIUM'
+        ELSE 'LOW'
+    END AS COLONY_NAME
+    FROM (SELECT ID,
+            PERCENT_RANK() OVER (ORDER BY SIZE_OF_COLONY DESC) AS PER
+            FROM ECOLI_DATA
+    ) AS A
     ORDER BY ID;
