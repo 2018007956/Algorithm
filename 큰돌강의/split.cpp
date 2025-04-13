@@ -1,16 +1,14 @@
 #include<bits/stdc++.h>
 using namespace std;
 
-vector<string> split(const string& input, string delimiter){
+vector<string> split(string input, string delimiter){
     vector<string> result;
-    auto start = 0;
-    auto end = input.find(delimiter); // find가 size-t 타입 형태를 반환
-    while (end != string::npos) { // 찾을 수 없을 때까지 반복
-        result.push_back(input.substr(start, end-start));
-        start = end + delimiter.size();
-        end = input.find(delimiter, start);
+    auto end = 0; // find가 size-t 타입 형태를 반환
+    while ((end=input.find(delimiter)) != string::npos) { // 찾을 수 없을 때까지 반복
+        result.push_back(input.substr(0, end));
+        input.erase(0, end + delimiter.size());
     }
-    result.push_back(input.substr(start));
+    result.push_back(input);
     return result;
 }
 
