@@ -3,9 +3,9 @@
   1. Enhancing code implementation capabilities
   2. Preparing for a coding test 
 - Language
-  - Python
   - Python3
+  - C++
 - Platform
-  - LeetCode
-  - programmers
   - BAEKJOON
+  - programmers
+  - LeetCode
