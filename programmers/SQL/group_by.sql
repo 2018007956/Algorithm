@@ -182,3 +182,45 @@ FROM ANIMAL_OUTS
 WHERE @hour < 23;
 /* @가 붙은 변수는 프로시저가 종료되어도 유지된다
 SQL 문법에서 :=은 비교 연산자 =과 혼동을 피하기 위한 대입 연산 */
+
+-- 언어별 개발자 분류하기
+WITH FE AS (
+    SELECT SUM(CODE)
+    FROM SKILLCODES
+    WHERE CATEGORY='Front End'
+)
+
+SELECT
+    CASE
+        WHEN SKILL_CODE & (SELECT * FROM FE)
+            AND SKILL_CODE & (SELECT CODE FROM SKILLCODES WHERE NAME = 'Python') THEN 'A'
+        WHEN SKILL_CODE & (SELECT CODE FROM SKILLCODES WHERE NAME = 'C#') THEN 'B'
+        WHEN SKILL_CODE & (SELECT * FROM FE) THEN 'C'
+        ELSE NULL
+    END AS GRADE
+    , ID
+    , EMAIL
+FROM DEVELOPERS
+HAVING GRADE IS NOT NULL
+ORDER BY 1, 2
+/* WHERE이 아니라 HAVING이어야 하는 이유?
+-> GRADE는 SELECT절에서 정의된 별칭(alias)이고, MYSQL에서는 HAVING절로 필터링 가능
+쿼리문 실행 순서는 (FROM > WHERE > GROUP BY > HAVING > SELECT > ORDER BY > LIMIT)이긴 함 */
+
+SELECT *
+FROM (
+    SELECT
+        CASE
+            WHEN SKILL_CODE & (SELECT SUM(CODE) FROM SKILLCODES WHERE CATEGORY='Front End')
+                AND SKILL_CODE & (SELECT CODE FROM SKILLCODES WHERE NAME = 'Python') THEN 'A'
+            WHEN SKILL_CODE & (SELECT CODE FROM SKILLCODES WHERE NAME = 'C#') THEN 'B'
+            WHEN SKILL_CODE & (SELECT SUM(CODE) FROM SKILLCODES WHERE CATEGORY='Front End') THEN 'C'
+            ELSE NULL
+        END AS GRADE,
+        ID,
+        EMAIL
+    FROM DEVELOPERS
+) T
+WHERE GRADE IS NOT NULL
+ORDER BY 1, 2;
+/* WHERE로 필터링 하고자 하면, 위와 같이 GRADE 로직을 서브쿼리로 감싸야 됨 */
