@@ -1,5 +1,4 @@
 import java.util.*;
-
 public class Solution {
     public int[] solution(int []arr) {
         int[] temp = new int[arr.length];
@@ -16,6 +15,25 @@ public class Solution {
 }
 
 // 다른 풀이
+import java.util.*;
+public class Solution {
+    public int[] solution(int []arr) {
+        List<Integer> answerList = new ArrayList<>();
+        
+        for (int i=0; i<arr.length-1; i++) {
+            if (arr[i] != arr[i+1])
+                answerList.add(arr[i]);
+        }
+        answerList.add(arr[arr.length-1]);
+        
+        int[] answer = new int[answerList.size()];
+        for (int i=0; i<answerList.size(); i++) {
+            answer[i] = answerList.get(i);
+        }
+        return answer;
+    }
+}
+
 public class Solution {
     public int[] solution(int []arr) {
         ArrayList<Integer> tempList = new ArrayList<Integer>();
@@ -30,5 +48,18 @@ public class Solution {
             answer[i] = tempList.get(i).intValue();
         }
         return answer;
+    }
+}
+
+// 리턴 타입 수정
+public class Solution {
+    public Stack<Integer> solution(int []arr) {
+        Stack<Integer> stack = new Stack<>();
+        for (int num : arr) {
+            if (stack.isEmpty() || stack.peek() != num) {
+                stack.push(num);
+            }
+        }
+        return stack;
     }
 }
