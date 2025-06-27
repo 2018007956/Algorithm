@@ -79,18 +79,16 @@ class Solution {
     static int[] dx = {1, 0, -1, 0};
     static int[] dy = {0, 1, 0, -1};
     static int answer;
-    static int solution(int[][] rectangle, int characterX, int characterY, int itemX, int itemY) {
+    public int solution(int[][] rectangle, int characterX, int characterY, int itemX, int itemY) {
         map = new int[101][101];
-        for (int[] r : rectangle) {
-            fill(2*r[0], 2*r[1], 2*r[2], 2*r[3]);
-            bfs(2*characterX, 2*characterY, 2*itemX, 2*itemY); // 2배배
-            return answer;
-        }
+        for (int[] r : rectangle) fill(2*r[0], 2*r[1], 2*r[2], 2*r[3]);
+        bfs(2*characterX, 2*characterY, 2*itemX, 2*itemY); // 2배
+        return answer;
     }
 
     // 내부와 테두리를 구분
     public void fill(int x1, int y1, int x2, int y2) {
-        for (int i=x1; ix<x2; i++) {
+        for (int i=x1; i<=x2; i++) {
             for (int j=y1; j<=y2; j++) {
                 if (map[i][j] == 2) continue;
                 map[i][j] = 2;
@@ -105,7 +103,7 @@ class Solution {
         int[][] cost = new int[101][101];
         cost[startX][startY] = 1;
 
-        while (!q.isEmpty) {
+        while (!q.isEmpty()) {
             int[] move = q.poll();
 
             for (int i=0; i<4; i++) {
@@ -115,7 +113,7 @@ class Solution {
                 if (0>moveX || 0>moveY || moveX>100 || moveY>100) continue;
                 if (map[moveX][moveY] == 1 && cost[moveX][moveY] == 0) {
                     cost[moveX][moveY] = cost[move[0]][move[1]] + 1;
-                    q.offer(new int[](moveX, moveY));
+                    q.offer(new int[]{moveX, moveY});
                 }
             }
         }
